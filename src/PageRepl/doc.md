@@ -77,7 +77,7 @@ console.log(new PageReplFIFO([1, 2, 3, 2, 1], 3).execute());
 ```js
 {
   algoName: 'First In First Out (FIFO)',
-  framesCount: 5,
+  framesCount: 3,
   pageRefs: [1, 2, 3, 2, 1],
   framesStates: [
     {
