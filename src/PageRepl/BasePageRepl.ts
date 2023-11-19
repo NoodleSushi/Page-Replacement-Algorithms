@@ -176,9 +176,9 @@ export default abstract class BasePageRepl {
       pageRefs: [...this._pageRefs],
       framesStates,
       faultsCount,
-      faultsPercentage: `${((faultsCount / this._pageRefs.length) * 100).toFixed(2)}%`,
+      faultsPercentage: `${(Math.round((faultsCount / this._pageRefs.length) * 100 * 100) / 100).toFixed(2)}%`,
       hitsCount,
-      hitsPercentage: `${((hitsCount / this._pageRefs.length) * 100).toFixed(2)}%`,
+      hitsPercentage: `${(Math.round((hitsCount / this._pageRefs.length) * 100 * 100) / 100).toFixed(2)}%`,
     };
   }
 
