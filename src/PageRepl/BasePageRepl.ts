@@ -123,6 +123,9 @@ export default abstract class BasePageRepl {
     let faultsCount: number = 0;
     let hitsCount: number = 0;
 
+    if (this.ready)
+      this.ready();
+
     for (let idx = 0; idx < this.pageRefs.length; idx++) {
       const page: number = this.pageRefs[idx];
       const framesContent: FrameContent[] = framesStates.length > 0
@@ -164,8 +167,10 @@ export default abstract class BasePageRepl {
           this._frameIdxHistory.push(faultFrameIdx);
         }
       }
-      const newFramesStates: FramesState = { idx, frameIdx, page, framesContent, isHit };
-      framesStates.push(newFramesStates);
+      const newFramesState: FramesState = { idx, frameIdx, page, framesContent, isHit };
+      framesStates.push(newFramesState);
+      if (this.postProcess)
+        this.postProcess(newFramesState);
     }
 
     return {
@@ -179,6 +184,10 @@ export default abstract class BasePageRepl {
       hitsPercentage: `${((hitsCount / this._pageRefs.length) * 100).toFixed(2)}%`,
     };
   }
+
+  protected ready?(): void;
+
+  protected postProcess?(newFramesState: Readonly<FramesState>): void;
 
   protected abstract manageFault(currentFramesState: Readonly<FramesState>): number;
 }
