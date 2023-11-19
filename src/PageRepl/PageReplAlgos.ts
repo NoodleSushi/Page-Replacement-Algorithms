@@ -40,6 +40,67 @@ export class PageReplLRU extends BasePageRepl {
   }
 }
 
+
+export class PageReplLFU extends BasePageRepl {
+  private pageFreqMap: Map<number, number>;
+
+  constructor(refSequence: number[], framesCount: number) {
+    super(refSequence, framesCount);
+    this.pageFreqMap = new Map<number, number>();
+  }
+
+  public get algoName(): string { return "Least Frequently Used (LFU)"; }
+
+  protected ready(): void {
+    this.pageFreqMap = new Map<number, number>();
+  }
+  
+  protected manageFault(currentFramesState: Readonly<FramesState>): number {
+    const origFramesContent: number[] = currentFramesState.framesContent
+      .map((frame) => frame.page)
+      .filter((page) => page !== null) as number[];
+    
+    const leastUsedPages: number[] = []
+    let leastUsedPageFreq: number = Infinity;
+
+    for (const page of origFramesContent) {
+      const pageFreq = this.pageFreqMap.get(page)!;
+      if (pageFreq < leastUsedPageFreq) {
+        leastUsedPageFreq = pageFreq;
+        leastUsedPages.length = 0;
+        leastUsedPages.push(page);
+      } else if (pageFreq == leastUsedPageFreq) {
+        leastUsedPages.push(page);
+      }
+    }
+
+    if (leastUsedPages.length == 1) {
+      this.pageFreqMap.set(leastUsedPages[0], 0)
+      return origFramesContent.indexOf(leastUsedPages[0]);
+    }
+
+    for (const frameIdx of this.frameIdxHistory) {
+      const page = origFramesContent[frameIdx];
+      if (leastUsedPages.includes(page)) {
+        this.pageFreqMap.set(page, 0)
+        return frameIdx;
+      }
+    }
+
+    throw new Error("This should never happen");
+  }
+
+  protected postProcess(newFramesState: Readonly<FramesState>): void {
+    const { page } = newFramesState;
+    if (this.pageFreqMap.has(page)) {
+      this.pageFreqMap.set(page, this.pageFreqMap.get(page)! + 1);
+    } else {
+      this.pageFreqMap.set(page, 1);
+    }
+  }
+}
+
+
 // TODO: fix last reference case on fault
 export class PageReplOptimal extends BasePageRepl {
   constructor(refSequence: number[], framesCount: number) {
