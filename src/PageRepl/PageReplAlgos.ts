@@ -101,7 +101,6 @@ export class PageReplLFU extends BasePageRepl {
 }
 
 
-// TODO: fix last reference case on fault
 export class PageReplOptimal extends BasePageRepl {
   constructor(refSequence: number[], framesCount: number) {
     super(refSequence, framesCount);
@@ -125,6 +124,18 @@ export class PageReplOptimal extends BasePageRepl {
         framesContent.splice(pageRefIdx, 1);
       }
     }
-    return origFramesContent.indexOf(framesContent[0]);
+
+    if (framesContent.length == 1) {
+      return origFramesContent.indexOf(framesContent[0]);
+    }
+
+    for (const frameIdx of this.frameIdxHistory) {
+      const page = origFramesContent[frameIdx];
+      if (framesContent.includes(page)) {
+        return frameIdx;
+      }
+    }
+
+    throw new Error("This should never happen");
   }
 }
