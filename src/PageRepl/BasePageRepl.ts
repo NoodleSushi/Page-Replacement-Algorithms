@@ -151,21 +151,18 @@ export default abstract class BasePageRepl {
         faultsCount++;
         const nullIdx = framesContent.findIndex((frame) => frame.page == null);
         if (nullIdx != -1) {
-          framesContent[nullIdx].page = page;
-          framesContent[nullIdx].state = "fault";
           frameIdx = nullIdx;
-          this._frameIdxHistory.push(nullIdx);
         } else {
           const faultFrameIdx = this.manageFault({ idx, frameIdx, page, framesContent, isHit });
           if (faultFrameIdx < 0 || faultFrameIdx >= framesContent.length) {
             throw new Error("Invalid fault frame index");
           }
-          framesContent[faultFrameIdx].page = page;
-          framesContent[faultFrameIdx].state = "fault";
           frameIdx = faultFrameIdx;
           this._frameIdxHistory.splice(this._frameIdxHistory.indexOf(faultFrameIdx), 1);
-          this._frameIdxHistory.push(faultFrameIdx);
         }
+        framesContent[frameIdx].page = page;
+        framesContent[frameIdx].state = "fault";
+        this._frameIdxHistory.push(frameIdx);
       }
       const newFramesState: FramesState = { idx, frameIdx, page, framesContent, isHit };
       framesStates.push(newFramesState);
