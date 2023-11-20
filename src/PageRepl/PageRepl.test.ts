@@ -108,3 +108,30 @@ test("PageReplOptimal test", () => {
     [5, 3, 4],
   ])
 });
+
+test("PageReplOptimal test II", () => {
+  expect(
+    new PageReplOptimal([7, 0, 1, 2, 0, 3, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7], 3)
+      .execute()
+      .framesStates
+      .map(x => x.framesContent.map(y => y.page))
+  ).toStrictEqual([
+    [7, null, null],
+    [7, 0, null],
+    [7, 0, 1],
+    [2, 0, 1],
+    [2, 0, 1],
+    [2, 0, 3],
+    [2, 4, 3],
+    [2, 4, 3],
+    [2, 4, 3],
+    [2, 0, 3],
+    [2, 0, 3],
+    [2, 0, 3],
+    [2, 0, 1],
+    [2, 0, 1],
+    [2, 0, 1],
+    [2, 0, 1],
+    [7, 0, 1],
+  ])
+});
