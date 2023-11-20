@@ -1,6 +1,9 @@
-# Types
+# PageRepl Documentation
 
-## BasePageRepl
+## Types
+
+### BasePageRepl
+
 This is the base class of and applies to all page replacement algorithms available.
 
 ```ts
@@ -13,13 +16,18 @@ abstract class BasePageRepl {
   public execute(): PageReplResults
 }
 ```
+
 The following Subclasses are available:
+
 - `PageReplFIFO`
 - `PageReplLRU`
 - `PageReplLFU`
 - `PageReplOptimal`
-## PageReplResults
+
+### PageReplResults
+
 This is the object type returned by `BasePageRepl`'s `execute()`
+
 ```ts
 interface PageReplResults {
   algoName: string;
@@ -47,10 +55,10 @@ interface FrameContent {
 }
 ```
 
+## Sample Usage
 
-# Sample Usage
+### From PageReplList
 
-## From PageReplList
 ```ts
 import { PageReplList } from "./PageRepl";
 
@@ -59,7 +67,8 @@ const name    = chosenPageRepl.name;
 const results = chosenPageRepl.class(..., ...).execute();
 ```
 
-## Directly From a Subclass
+### Directly From a Subclass
+
 ```ts
 import { PageReplFIFO } from "./PageRepl";
 const chosenPageRepl = new PageReplFIFO(..., ...);
@@ -67,13 +76,17 @@ const name    = chosenPageRepl.algoName;
 const results = chosenPageRepl.execute();
 ```
 
-# Example
-## Code
+## Example
+
+### Code
+
 ```ts
 import { PageReplFIFO } from "./PageRepl";
 console.log(new PageReplFIFO([1, 2, 3, 2, 1], 3).execute());
 ```
-## Results
+
+### Results
+
 ```js
 {
   algoName: 'First In First Out (FIFO)',
