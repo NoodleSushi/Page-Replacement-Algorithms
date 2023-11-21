@@ -46,6 +46,7 @@ interface FramesState {
   page: number;
   framesContent: FrameContent[];
   isHit: boolean;
+  frequencyStates?: FrequencyState[];
 }
 
 interface FrameContent {
@@ -53,6 +54,13 @@ interface FrameContent {
   page: number | null;
   state: "fault" | "hit" | "empty" | "unchanged";
 }
+
+export interface FrequencyState {
+  page: number;
+  freq: number;
+  isUpdated: boolean;
+}
+
 ```
 
 ## Sample Usage
