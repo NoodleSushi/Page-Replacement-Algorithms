@@ -25,6 +25,7 @@ export interface FramesState {
   page: number;
   framesContent: FrameContent[];
   isHit: boolean;
+  frequencyStates?: FrequencyState[];
 }
 
 export type OptionalFramesStateProps = PickOptional<FramesState>;
@@ -33,6 +34,12 @@ export interface FrameContent {
   frameIdx: number;
   page: number | null;
   state: "fault" | "hit" | "empty" | "unchanged";
+}
+
+export interface FrequencyState {
+  page: number;
+  freq: number;
+  isUpdated: boolean;
 }
 
 export default abstract class BasePageRepl {
