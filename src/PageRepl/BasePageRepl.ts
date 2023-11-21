@@ -1,3 +1,13 @@
+type OptionalKeys<T> = {
+  [K in keyof T]: T extends Record<K, T[K]>
+      ? never
+      : K
+} extends { [_ in keyof T]: infer U }
+  ? U
+  : never;
+
+type PickOptional<T> = Pick<T, OptionalKeys<T>>;
+
 export interface PageReplResults {
   algoName: string;
   framesCount: number;
@@ -16,6 +26,8 @@ export interface FramesState {
   framesContent: FrameContent[];
   isHit: boolean;
 }
+
+export type OptionalFramesStateProps = PickOptional<FramesState>;
 
 export interface FrameContent {
   frameIdx: number;
@@ -67,7 +79,8 @@ export default abstract class BasePageRepl {
             frameIdx,
             page: null,
             state: "empty",
-          }));
+        }));
+      let optionalFramesStateProps: OptionalFramesStateProps = {};
       const hitIdx: number = framesContent.findIndex((frame) => frame.page === page);
       const isHit: boolean = (hitIdx != -1);
       let frameIdx: number = -1;
@@ -82,7 +95,17 @@ export default abstract class BasePageRepl {
         if (nullIdx != -1) {
           frameIdx = nullIdx;
         } else {
-          const faultFrameIdx = this.manageFault({ idx, frameIdx, page, framesContent, isHit });
+          const faultResult = this.manageFault({ idx, frameIdx, page, framesContent, isHit });
+          let faultFrameIdx: number;
+          if (Array.isArray(faultResult)) {
+            faultFrameIdx = faultResult[0];
+            optionalFramesStateProps = {
+              ...optionalFramesStateProps,
+              ...faultResult[1],
+            }
+          } else {
+            faultFrameIdx = faultResult;
+          }
           if (faultFrameIdx < 0 || faultFrameIdx >= framesContent.length) {
             throw new Error("Invalid fault frame index");
           }
@@ -93,10 +116,14 @@ export default abstract class BasePageRepl {
         framesContent[frameIdx].state = "fault";
         this._frameIdxHistory.push(frameIdx);
       }
-      const newFramesState: FramesState = { idx, frameIdx, page, framesContent, isHit };
+      let newFramesState: FramesState = { idx, frameIdx, page, framesContent, isHit, ...optionalFramesStateProps };
+      if (this.postProcess) {
+        const addFramesState = this.postProcess(newFramesState);
+        if (addFramesState) {
+          newFramesState = { ...newFramesState, ...addFramesState };
+        }
+      }
       framesStates.push(newFramesState);
-      if (this.postProcess)
-        this.postProcess(newFramesState);
     }
 
     return {
@@ -113,7 +140,7 @@ export default abstract class BasePageRepl {
 
   protected ready?(): void;
 
-  protected postProcess?(newFramesState: Readonly<FramesState>): void;
+  protected postProcess?(newFramesState: Readonly<FramesState>): OptionalFramesStateProps | void;
 
-  protected abstract manageFault(currentFramesState: Readonly<FramesState>): number;
+  protected abstract manageFault(currentFramesState: Readonly<FramesState>): number | [number, OptionalFramesStateProps];
 }
