@@ -1,4 +1,4 @@
-import BasePageRepl, { FramesState } from "./BasePageRepl";
+import BasePageRepl, { FramesState, OptionalFramesStateProps } from "./BasePageRepl";
 
 export class PageReplFIFO extends BasePageRepl {
   constructor(refSequence: number[], framesCount: number) {
@@ -90,12 +90,21 @@ export class PageReplLFU extends BasePageRepl {
     throw new Error("This should never happen");
   }
 
-  protected postProcess(newFramesState: Readonly<FramesState>): void {
+  protected postProcess(newFramesState: Readonly<FramesState>): OptionalFramesStateProps {
     const { page } = newFramesState;
     if (this.pageFreqMap.has(page)) {
       this.pageFreqMap.set(page, this.pageFreqMap.get(page)! + 1);
     } else {
       this.pageFreqMap.set(page, 1);
+    }
+    return {
+      frequencyStates: Array.from(this.pageFreqMap.entries())
+        .map(([curPage, freq]) => ({
+          page: curPage,
+          freq,
+          isUpdated: curPage == page,
+        }))
+        .sort((a, b) => b.page - a.page),
     }
   }
 }
