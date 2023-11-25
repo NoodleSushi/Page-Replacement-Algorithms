@@ -1,7 +1,7 @@
 <template>
   <div>
     <br>
-    <h2>FIFO</h2>
+    <h2>LFU</h2>
     <br>
     <table>
      
@@ -37,13 +37,12 @@
 </template>
 
 <script>
-import { PageReplFIFO } from "../PageRepl"
+import { PageReplLFU } from "../PageRepl"
 
 // INPUT HERE:
-const fifo = new PageReplFIFO([1, 2, 3, 2, 1], 3);
-const execFIFO = fifo.execute()
-const { pageRefs, framesContent, framesStates, framesCount, faultsCount, hitsCount, faultsPercentage, hitsPercentage } = execFIFO
-
+const lfu = new PageReplLFU([7, 0, 1, 2, 0, 3, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7], 3);
+const execLFU = lfu.execute()
+const { pageRefs, framesContent, framesStates, framesCount, faultsCount, hitsCount, faultsPercentage, hitsPercentage } = execLFU
 
 export default {
     

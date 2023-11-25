@@ -8,6 +8,11 @@ type OptionalKeys<T> = {
 
 type PickOptional<T> = Pick<T, OptionalKeys<T>>;
 
+// const samp = { 
+//   a: "random",
+//   b: 234
+// }
+
 export interface PageReplResults {
   algoName: string;
   framesCount: number;
@@ -132,6 +137,8 @@ export default abstract class BasePageRepl {
       }
       framesStates.push(newFramesState);
     }
+
+    // console.log(framesContent, "asdf")
 
     return {
       algoName: this.algoName,

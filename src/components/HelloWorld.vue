@@ -1,29 +1,35 @@
 <script setup lang="ts">
+
 import { ref } from 'vue'
-import PageRefAlgoOption from './PageRefAlgoOption.vue'
+import PageReplFIFO from './PageRefAlgoOption.vue'
+import PageReplLRU from './PageReplLRU.vue'
+import PageReplLFU from './PageReplLFU.vue'
+import PageReplOptimal from './PageReplOptimal.vue'
 
-defineProps<{ msg: string }>()
-
-const PageRefAlgos = ref(["First In First Out (FIFO)", "Least Recently Used (LRU)", "Least Frequently Used (LFU)", "Optimal"])
-
-const count = ref(0)
 </script>
 
 <template>
 
-  <h1>Page Replacement Algorithms</h1>
+  <div class="title-container">
+    <h1 class="title">Page Replacement Algorithms</h1>
+  </div>
 
-  <PageRefAlgoOption :options="PageRefAlgos" />  
+  <!-- First In First Out (FIFO) -->
+  <PageReplFIFO />  
   
+  <!-- Least Recently Used (LRU) -->
+  <PageReplLRU />
+
+  <!-- Least Frequently Used (LFU) -->
+  <PageReplLFU />
+  
+  <!-- Optimal -->
+  <PageReplOptimal />
 
 </template>
 
 <style scoped>
-  .read-the-docs {
-    color: #888;
-  }
+  
 
-  h1 {
-    position: relative;
-  }
+
 </style>
