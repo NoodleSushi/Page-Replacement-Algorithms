@@ -1,12 +1,30 @@
 <template>
   <div>
+    <br><br>
+  <div class="input-container">
+
+
+      <div class="input-numbers">
+          <input type="text" v-model="pages" placeholder="Input pages here">
+      </div>
+
+      <div class="input-frames">
+          <input type="number" v-model="totalFrames" placeholder="Input num of frames">
+      </div>
+
+      <!-- <button @click="generate">
+        Generate
+      </button> -->
+
+
+  </div>
     <br>
     <h2>FIFO</h2>
     <br>
     <table>
      
       <tr>
-        <th v-for="n in pages" :key="n">Page: {{ n }}</th>
+        <th v-for="n in formatInput" :key="n">Page: {{ n }}</th>
       </tr>
 
       <tr>
@@ -39,23 +57,31 @@
 <script>
 import { PageReplFIFO } from "../PageRepl"
 
+// console.log(totalFrames, "totalFrames")
+
 // INPUT HERE:
-const fifo = new PageReplFIFO([1, 2, 3, 2, 1], 3);
+const fifo = new PageReplFIFO([], '');
 const execFIFO = fifo.execute()
 const { pageRefs, framesContent, framesStates, framesCount, faultsCount, hitsCount, faultsPercentage, hitsPercentage } = execFIFO
 
 
 export default {
-    
+    // 5,6,1,6,7
   data() {
     return { //coming from BasePageRepl.ts
+      // pagesInput: [],
+      // framesInput: '',
       framesStates:  framesStates,
-      pages: pageRefs,
+      // pages: pageRefs,
+      pages: '',
       index: pageRefs.length, 
       totalFrames: framesCount
     };
   },
   computed: {
+    formatInput() {
+      return this.pages.split(',').map(el=>el.trim())
+    },
     numberOfFaults() {
       return faultsCount;
     },
@@ -106,5 +132,14 @@ export default {
     }
     h2 {
         text-align: center;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      /* justify-content: space-between; */
+      /* align-content: space-between; */
     }
 </style>
