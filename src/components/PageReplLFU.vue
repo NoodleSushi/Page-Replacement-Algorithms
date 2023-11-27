@@ -1,13 +1,31 @@
 <template>
   <div>
+    <br><br>
+  <div class="input-container">
+
+
+      <div class="input-numbers">
+          <input type="text" v-model="pages" placeholder="Input pages here">
+      </div>
+
+      <div class="input-frames">
+          <input type="number" v-model="totalFrames" placeholder="Input num of frames">
+      </div>
+
+      <button @click="generate">
+        Generate
+      </button>
+
+
+  </div>
     <br>
     <h2>LFU</h2>
     <br>
     <table>
      
-      <tr>
-        <th v-for="n in pages" :key="n">Page: {{ n }}</th>
-      </tr>
+      <!-- <tr>
+        <th v-for="n in pagesArray" :key="n">Page: {{ n }}</th>
+      </tr> -->
 
       <tr>
         <th v-for="ndx in index" :key="ndx">{{ ndx }}</th>
@@ -24,9 +42,9 @@
     </table>
     <br><br>
     <div>
-      Number of Faults: {{ numberOfFaults }}
+      Number of Faults: {{ faultsCount }}
       <br>
-      Number of Hits: {{ numberOfHits }}
+      Number of Hits: {{ hitsCount }}
       <br>
       Faults Percentage: {{ faultsPercentage }}
       <br>
@@ -39,34 +57,46 @@
 <script>
 import { PageReplLFU } from "../PageRepl"
 
+// console.log(totalFrames, "totalFrames")
+
 // INPUT HERE:
 const lfu = new PageReplLFU([7, 0, 1, 2, 0, 3, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7], 3);
 const execLFU = lfu.execute()
-const { pageRefs, framesContent, framesStates, framesCount, faultsCount, hitsCount, faultsPercentage, hitsPercentage } = execLFU
 
 export default {
-    
+    // 5,6,1,6,7
   data() {
     return { //coming from BasePageRepl.ts
-      framesStates:  framesStates,
-      pages: pageRefs,
-      index: pageRefs.length, 
-      totalFrames: framesCount
+      // pagesInput: [],
+      // framesInput: '',
+      faultsPercentage: 0,
+      hitsPercentage: 0,
+      hitsCount: 0,
+      faultsCount: 0,
+
+      framesStates:  0,
+      // pages: pageRefs,
+      pages: '',
+      index: 0, 
+      totalFrames: 0,
     };
   },
   computed: {
-    numberOfFaults() {
-      return faultsCount;
+    formatInput() {
+      return this.pages.split(',').map(el=>el.trim())
     },
-    numberOfHits() {
-      return hitsCount;
-    },
-    faultsPercentage() {
-      return faultsPercentage;
-    },
-    hitsPercentage() {
-      return hitsPercentage;
-    },
+    // numberOfFaults() {
+    //   return this.faultsCount;
+    // },
+    // numberOfHits() {
+    //   return this.hitsCount;
+    // },
+    // faultsPercentage() {
+    //   return this.faultsPercentage;
+    // },
+    // hitsPercentage() {
+    //   return this.hitsPercentage;
+    // },
   },
   methods: {
     getClassForFrameContent(framesContent, frameNumber) {
@@ -76,7 +106,26 @@ export default {
     getPageForFrameContent(framesContent, frameNumber) {
       const content = framesContent[frameNumber];
       return content && content.page !== null ? content.page : '';
-    }
+    },
+    generate() {
+      const pagesArray = this.pages.split(',').map(el=>el.trim())
+      const frameNum = this.totalFrames
+
+      const lfu = new PageReplLFU(pagesArray, frameNum);
+      const execLFU = lfu.execute()
+      const { pageRefs, framesContent, framesStates, framesCount, faultsCount, hitsCount, faultsPercentage, hitsPercentage } = execLFU
+
+      this.framesStates =  framesStates,
+      // pages: pageRefs,
+      this.pages = '',
+      this.index = pageRefs.length, 
+      this.totalFrames = framesCount
+
+      this.faultsCount = faultsCount
+      this.hitsCount = hitsCount
+      this.faultsPercentage = faultsPercentage
+      this.hitsPercentage = hitsPercentage
+    }, 
   }
 };
 </script>
@@ -105,5 +154,14 @@ export default {
     }
     h2 {
         text-align: center;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      /* justify-content: space-between; */
+      /* align-content: space-between; */
     }
 </style>
