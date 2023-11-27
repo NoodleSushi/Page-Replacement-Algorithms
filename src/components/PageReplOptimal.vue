@@ -112,7 +112,7 @@ export default {
       const pagesArray = this.pages.split(' ').map(el=>el.trim())
       const frameNum = this.totalFrames
 
-      const optimal = new PageReplOptimal([7, 0, 1, 2, 0, 3, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7], 3);
+      const optimal = new PageReplOptimal(pagesArray, frameNum);
       const execOptimal = optimal.execute()
       const { pageRefs, framesContent, framesStates, framesCount, faultsCount, hitsCount, faultsPercentage, hitsPercentage } = execOptimal
 
