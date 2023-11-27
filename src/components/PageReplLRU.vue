@@ -109,7 +109,7 @@ export default {
       return content && content.page !== null ? content.page : '';
     },
     generate() {
-      const pagesArray = this.pages.split(',').map(el=>el.trim())
+      const pagesArray = this.pages.split(' ').map(el=>el.trim()) 
       const frameNum = this.totalFrames
 
       const lru = new PageReplLRU(pagesArray, frameNum);
